@@ -1,0 +1,273 @@
+
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Video Playlist UI Design Like Udemy | SkillShare</title>
+    <style>
+
+:root {
+    --primary : linear-gradient(to bottom right, #0a0057, #3f00ee);
+    --secondary : gold;
+    --text : #fff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    background-image: var(--primary);
+    font-family: sans-serif;
+    color: var(--text);
+
+    display: flex;
+    align-items: center;
+}
+
+.container {
+    width: 100vw;
+
+    display: grid;
+    grid-template-columns: 1.2fr 1.8fr;
+    gap: 1rem;
+    
+    padding: .5rem 1rem;
+    text-transform: capitalize;
+}
+
+@media screen and (max-width: 990px) {
+    .container {
+        grid-template-columns: 1fr;
+    }
+}
+
+.main-video {
+    width: 60vw;
+    height: 75vh;
+    margin-top: 3rem;
+    overflow: hidden;
+}
+
+.video-playlist {
+    width: 100%;
+    height: 37rem;
+}
+
+/* .main-video .title {
+    margin-top: 1rem;
+} */
+
+#check {
+    display: none;
+}
+
+.video-playlist .title {
+    margin-bottom: 4vh;
+    padding-left: 1rem;
+}
+
+
+.title2 {
+    width: 60vw;
+    margin-top: 3vh;
+    /* margin-left: 10vh; */
+    font-size: 3vh;
+    text-align: center;
+}
+
+.video-playlist > p {
+    padding: 1rem;
+    color: var(--secondary);
+}
+
+.video-playlist .videos{
+    height: 70%;
+    overflow-y: auto;
+}
+
+.video-playlist .videos::-webkit-scrollbar {
+    width: .4rem;
+    border-radius: .4rem;
+    background-color: #0005;
+}
+
+.video-playlist .videos::-webkit-scrollbar-thumb {
+    border-radius: .4rem;
+    background-color: #fff;
+}
+
+.video-playlist .videos .video {
+    position: relative;
+    width: 100%;
+    height: 4rem;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 0 1rem;
+    margin-top: .1rem;
+    cursor: pointer;
+
+    border-radius: .5rem;
+}
+
+.video-playlist .videos .video:hover {
+    background-color: #0003;
+}
+/* 
+.video-playlist .videos .video.active {
+
+} */
+
+.main-video video {
+    width: 60vw;
+    height: 65vh;
+    border-radius: .5rem;
+}
+
+.video img {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    
+    width: 1.5rem;
+    height: 1.5rem;
+    
+    filter: invert(100%);
+}
+/* 
+.video-playlist .videos .video.active img {
+    filter: invert(100%) sepia(100%) saturate(2000%) hue-rotate(360deg);
+} */
+
+.video p {
+   margin-left: 2.5rem;
+}
+
+.video h3 {
+    width: 23rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    font: 100 1rem sans-serif;
+    padding: 0 .5rem;
+}
+    </style>
+</head>
+
+<body onload="call_read()">
+    <main class="container"> 
+      <section class="video-playlist">  
+        <h2 class="title">Media Player</h2>
+        <div class="videos"></div>
+      </section>
+        <section class="main-video">
+            <video src="videos/manipulate text background.mp4" controls autoplay></video>
+            <h3 class="title2"></h3>
+        </section>
+
+       
+    </main>
+    <script>
+        var len;
+        var data;
+        var jsname = [];
+        var jsurl = [];
+        const main_video = document.querySelector('.main-video video');
+        const main_video_title = document.querySelector('.main-video .title2');
+        const video_playlist = document.querySelector('.video-playlist .videos');
+        var videos = document.querySelectorAll('.video');
+
+        console.log("vid-play"+video_playlist.innerHTML);
+
+        var vid_elem = '';
+        async function call_read() {
+            let response = await fetch("http://localhost:8080/read", { 
+                method: "GET"
+            });
+            data = await response.json();
+            len = data.length;
+            // let data = await response.text();
+            // let data_json = JSON.stringify(data);
+            console.log("Test: "+ data[0]["url"]);
+            console.log("lens: "+len);
+            // console.log("Res: "+response.json());
+            // console.log("data: "+ data[1]);
+            // console.log("Data Json: "+ data_json['name']);
+            for(let i = 0; i < len; i++) {
+                jsname[i] = data[i]["name"];
+                jsurl[i] = data[i]["url"];
+                console.log("jsname: "+ jsname[i]);
+                console.log("jsurl: "+ jsurl[i]);
+            }
+            for (let j = 0; j < len; j++) {
+              vid_elem += '<div class="video" onclick="showvid(this)" data-name="'+jsname[j]+'" data-url="'+jsurl[j]+'">';
+                vid_elem += ' <img src="'+jsurl[j]+'" alt="">';
+                vid_elem += ' <p>'+j + 1 > 9 ? j + 1 : '0' + (j + 1)+'</p>';
+                vid_elem += ' <h3 class="vidtitle">'+jsname[j]+'</h3>';
+                vid_elem += '</div>';
+            }
+
+            console.log(jsname[1]);
+
+            video_playlist.innerHTML += vid_elem;
+            videos[0].classList.add('active');
+            videos[0].querySelector('img').src = 'images/pause.svg';
+        }
+        
+
+
+
+console.log("vid-play"+video_playlist.innerHTML);
+console.log("vid-elem"+vid_elem);
+
+
+function showvid(videoplay) {
+    let showurl = videoplay.getAttribute("data-url");
+    let showname = videoplay.getAttribute("data-name");
+    main_video.src = showurl
+    main_video_title.innerHTML = showname;
+}
+// data.forEach((video, i) => {
+//     let video_element = `
+//                 <div class="video" data-id="${video.id}">
+//                     <img src="images/play.svg" alt="">
+//                     <p>${i + 1 > 9 ? i + 1 : '0' + (i + 1)}. </p>
+//                     <h3 class="title">${video.title}</h3>
+//                     <p class="time">${video.duration}</p>
+//                 </div>
+//     `;
+//     video_playlist.innerHTML += video_element;
+// })
+
+
+// videos.forEach(selected_video => {
+//     selected_video.onclick = () => {
+
+//         for (all_videos of videos) {
+//             all_videos.classList.remove('active');
+//             all_videos.querySelector('img').src = 'images/play.svg';
+
+//         }
+
+//         selected_video.classList.add('active');
+//         selected_video.querySelector('img').src = 'images/pause.svg';
+
+//         let match_video = data.find(video => video.id == selected_video.dataset.id);
+//         main_video.src = 
+//         main_video_title.innerHTML = match_video.title;
+//     }
+// });
+    </script>
+</body>
+
+</html>
